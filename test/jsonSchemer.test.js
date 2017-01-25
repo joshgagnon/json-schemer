@@ -1,6 +1,6 @@
 const chai = require('chai');
 const merge = require('deepmerge');
-import { resolveReferences } from '../src/jsonSchemer';
+import resolveReferences from '../src/resolveReferences';
 
 const should = chai.should();
 

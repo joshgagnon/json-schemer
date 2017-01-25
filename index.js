@@ -1,1 +1,1 @@
-module.exports = require('./lib/jsonSchemer');
+module.exports = require('./lib/index');
