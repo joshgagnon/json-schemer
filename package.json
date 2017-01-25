@@ -6,7 +6,8 @@
     "npm": "~3.5.2"
   },
   "scripts": {
-        "compile": "babel -d lib/ src/"
+    "test": "./node_modules/.bin/mocha --compilers js:babel-core/register",
+    "compile": "babel -d lib/ src/"
   },
   "repository": {
     "type": "git",
