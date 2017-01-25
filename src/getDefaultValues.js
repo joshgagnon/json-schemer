@@ -1,5 +1,5 @@
 // Appears to not be populating default on list items
-export default function getDefaultValues(schema, defaults){
+export default function getDefaultValues(schema, defaults) {
     if (!defaults){
         defaults = {};
     }
