@@ -1,15 +1,15 @@
-export function getIn(obj, fields){
+function getIn(obj, fields){
     return fields.reduce((obj, f) => {
         return obj ? obj[f] : null
     }, obj);
 }
 
-export function componentType(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "inputComponent"])
+function oneOfField(fieldProps){
+    return getIn(fieldProps, ['x-hints', "form", "selector"])
 }
 
-export function oneOfField(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "selector"])
+export function componentType(fieldProps){
+    return getIn(fieldProps, ['x-hints', "form", "inputComponent"])
 }
 
 export function addItem(fieldProps){
@@ -18,10 +18,6 @@ export function addItem(fieldProps){
 
 export function inputSelectSource(fieldProps){
     return getIn(fieldProps, ['x-hints', "form", "selectFromSource"]);
-}
-
-export function inputSourceTitle(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "inputTitle"]);
 }
 
 export function inputSource(fieldProps){

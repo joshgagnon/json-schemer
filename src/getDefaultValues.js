@@ -1,3 +1,5 @@
+import getKey from './getKey';
+
 // Appears to not be populating default on list items
 export default function getDefaultValues(schema, defaults) {
     if (!defaults){
@@ -22,7 +24,7 @@ export default function getDefaultValues(schema, defaults) {
                 if(props[key].items.type === "object"){
                     let obj = fields[key] || [];
 
-                    loop(props[key].items.properties, obj, {...(suppliedDefaults[key] || {}), _keyIndex: keyIndex++});
+                    loop(props[key].items.properties, obj, {...(suppliedDefaults[key] || {}), _keyIndex: getKey()});
                     if(props[key].items.oneOf){
                         obj.map(o => props[key].items.oneOf.map(oneOf => {
                             loop(oneOf.properties, o, suppliedDefaults[key] || {});
