@@ -210,5 +210,56 @@ describe('JSON Schema', function() {
                 done();
             });
         });
+
+        describe('Merge and Override References', function() {
+            const definitions = {
+                "numbers": {
+                    "one": 1,
+                    "two": 2,
+                    "primeNumber": 11
+                },
+            };
+
+            it('Should merge reference with other keys', function(done) {
+                const testcase = merge(definitions, {
+                    "numbers": {
+                        "$ref": "#/numbers",
+                        "three": 3
+                    }
+                });
+
+                const expected = merge(definitions, {
+                    "numbers": {
+                        "one": 1,
+                        "two": 2,
+                        "primeNumber": 11,
+                        "three": 3
+                    }
+                });
+
+                resolveReferences(testcase).should.be.deep.equal(expected);
+                done();
+            });
+
+            it('Should override references if duplicate key exists', function(done) {
+                const testcase = merge(definitions, {
+                    "numbers": {
+                        "$ref": "#/numbers",
+                        "primeNumber": 23
+                    }
+                });
+
+                const expected = merge(definitions, {
+                    "numbers": {
+                        "one": 1,
+                        "two": 2,
+                        "primeNumber": 23
+                    }
+                });
+
+                resolveReferences(testcase).should.be.deep.equal(expected);
+                done();
+            });
+        });
     });
 });

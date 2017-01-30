@@ -1,3 +1,6 @@
+import merge from 'deepmerge';
+import isPlainObject from 'lodash/isPlainObject';
+
 export default function resolveReferences(rootSchema) {
     const deepFind = (schema, keys) => {
         if (keys.length == 0) {
@@ -17,11 +20,19 @@ export default function resolveReferences(rootSchema) {
             const definitionKeys = item['$ref'].split('/');
 
             // # = root schema
-            if (definitionKeys[0] == '#') {
+            if (definitionKeys[0] === '#') {
                 // Find the replacement value for the reference
-                const refReplacement = deepFind(rootSchema, definitionKeys.splice(1));
+                let refReplacement = deepFind(rootSchema, definitionKeys.splice(1));
+                
+                // Apply overrides
+                if (isPlainObject(refReplacement)) {
+                    let itemWithoutRef = item;
+                    delete itemWithoutRef['$ref'];
 
-                // Resolve the references of the reference replacement value and return it
+                    refReplacement = merge(refReplacement, itemWithoutRef);
+                }
+
+                // Return fully resolved object
                 return resolveChildReferences(refReplacement);
             } else {
                 throw new Exception("Non-absolute references are not currently supported");
