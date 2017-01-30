@@ -129,137 +129,135 @@ const nestedReferences = {"definitions": {
     },
 }};
 
-describe('JSON Schema', function() {
-    describe('Resolve references in root schema', function() {
-        describe('Objects without references', function() {
-            it('Should not change schema without references', function(done) {
-                const mergedWithReferences = merge(definitions, jsonWithoutReferences);
-                const mergedWithResolvedReferences = merge(definitions, jsonWithoutReferences);
+describe('Resolve References', function() {
+    describe('Objects without references', function() {
+        it('Should not change schema without references', function(done) {
+            const mergedWithReferences = merge(definitions, jsonWithoutReferences);
+            const mergedWithResolvedReferences = merge(definitions, jsonWithoutReferences);
 
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
+        });
+    });
+
+    describe('Objects with a single reference', function() {
+        it('Should replace string references', function(done) {
+            const mergedWithReferences = merge(definitions, jsonWithStringReference);
+            const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedStringReferences);
+
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
         });
 
-        describe('Objects with a single reference', function() {
-            it('Should replace string references', function(done) {
-                const mergedWithReferences = merge(definitions, jsonWithStringReference);
-                const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedStringReferences);
+        it('Should replace number references', function(done) {
+            const mergedWithReferences = merge(definitions, jsonWithNumberReference);
+            const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedNumberReference);
 
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
-
-            it('Should replace number references', function(done) {
-                const mergedWithReferences = merge(definitions, jsonWithNumberReference);
-                const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedNumberReference);
-
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
-
-            it('Should replace array references', function(done) {
-                const mergedWithReferences = merge(definitions, jsonWithArrayReference);
-                const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedArrayReference);
-
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
-
-            it('Should replace references in array', function(done) {
-                const mergedWithReferences = merge(definitions, jsonArrayWithReference);
-                const mergedWithResolvedReferences = merge(definitions, jsonArrayWithResolvedReference);
-
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
-
-            it('Should replace object references', function(done) {
-                const mergedWithReferences = merge(definitions, jsonWithObjectReference);
-                const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedObjectReference);
-
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
         });
 
-        describe('Objects with multiple references', function() {
-            it('Should replace all references', function(done) {
-                const mergedWithReferences = merge(definitions, jsonWithMultipleReferences);
-                const mergedWithResolvedReferences = merge(definitions, jsonWithMultipleResolvedReferences);
+        it('Should replace array references', function(done) {
+            const mergedWithReferences = merge(definitions, jsonWithArrayReference);
+            const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedArrayReference);
 
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
         });
 
-        describe('Resolve references of references', function() {
-            it('Should resolve reference of reference', function(done) {
-                const mergedWithReferences = merge(nestedReferences, {"testing": {"$ref": "#/definitions/straightRef"}});
-                const mergedWithResolvedReferences = merge(nestedReferences, {"testing": "someRandomText"});
+        it('Should replace references in array', function(done) {
+            const mergedWithReferences = merge(definitions, jsonArrayWithReference);
+            const mergedWithResolvedReferences = merge(definitions, jsonArrayWithResolvedReference);
 
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
-
-            it('Should resolve reference of object with reference', function(done) {
-                const mergedWithReferences = merge(nestedReferences, {"testing": {"$ref": "#/definitions/objectWithRef"}});
-                const mergedWithResolvedReferences = merge(nestedReferences, {"testing": {"something": 21, "childRef": ["one", "two", "three"]}});
-
-                resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
-                done();
-            });
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
         });
 
-        describe('Merge and Override References', function() {
-            const definitions = {
+        it('Should replace object references', function(done) {
+            const mergedWithReferences = merge(definitions, jsonWithObjectReference);
+            const mergedWithResolvedReferences = merge(definitions, jsonWithResolvedObjectReference);
+
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
+        });
+    });
+
+    describe('Objects with multiple references', function() {
+        it('Should replace all references', function(done) {
+            const mergedWithReferences = merge(definitions, jsonWithMultipleReferences);
+            const mergedWithResolvedReferences = merge(definitions, jsonWithMultipleResolvedReferences);
+
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
+        });
+    });
+
+    describe('Resolve references of references', function() {
+        it('Should resolve reference of reference', function(done) {
+            const mergedWithReferences = merge(nestedReferences, {"testing": {"$ref": "#/definitions/straightRef"}});
+            const mergedWithResolvedReferences = merge(nestedReferences, {"testing": "someRandomText"});
+
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
+        });
+
+        it('Should resolve reference of object with reference', function(done) {
+            const mergedWithReferences = merge(nestedReferences, {"testing": {"$ref": "#/definitions/objectWithRef"}});
+            const mergedWithResolvedReferences = merge(nestedReferences, {"testing": {"something": 21, "childRef": ["one", "two", "three"]}});
+
+            resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
+            done();
+        });
+    });
+
+    describe('Merge and Override References', function() {
+        const definitions = {
+            "numbers": {
+                "one": 1,
+                "two": 2,
+                "primeNumber": 11
+            },
+        };
+
+        it('Should merge reference with other keys', function(done) {
+            const testcase = merge(definitions, {
+                "numbers": {
+                    "$ref": "#/numbers",
+                    "three": 3
+                }
+            });
+
+            const expected = merge(definitions, {
                 "numbers": {
                     "one": 1,
                     "two": 2,
-                    "primeNumber": 11
-                },
-            };
-
-            it('Should merge reference with other keys', function(done) {
-                const testcase = merge(definitions, {
-                    "numbers": {
-                        "$ref": "#/numbers",
-                        "three": 3
-                    }
-                });
-
-                const expected = merge(definitions, {
-                    "numbers": {
-                        "one": 1,
-                        "two": 2,
-                        "primeNumber": 11,
-                        "three": 3
-                    }
-                });
-
-                resolveReferences(testcase).should.be.deep.equal(expected);
-                done();
+                    "primeNumber": 11,
+                    "three": 3
+                }
             });
 
-            it('Should override references if duplicate key exists', function(done) {
-                const testcase = merge(definitions, {
-                    "numbers": {
-                        "$ref": "#/numbers",
-                        "primeNumber": 23
-                    }
-                });
+            resolveReferences(testcase).should.be.deep.equal(expected);
+            done();
+        });
 
-                const expected = merge(definitions, {
-                    "numbers": {
-                        "one": 1,
-                        "two": 2,
-                        "primeNumber": 23
-                    }
-                });
-
-                resolveReferences(testcase).should.be.deep.equal(expected);
-                done();
+        it('Should override references if duplicate key exists', function(done) {
+            const testcase = merge(definitions, {
+                "numbers": {
+                    "$ref": "#/numbers",
+                    "primeNumber": 23
+                }
             });
+
+            const expected = merge(definitions, {
+                "numbers": {
+                    "one": 1,
+                    "two": 2,
+                    "primeNumber": 23
+                }
+            });
+
+            resolveReferences(testcase).should.be.deep.equal(expected);
+            done();
         });
     });
 });
