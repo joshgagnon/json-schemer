@@ -16,14 +16,14 @@ export default function resolveReferences(rootSchema) {
 
     const resolveChildReferences = (item) => {
         // If this item is has a ref property: replace it with the reference it is pointing to
-        if (item instanceof Object && item['$ref']) {
+        if (isPlainObject(item) && item['$ref']) {
             const definitionKeys = item['$ref'].split('/');
 
             // # = root schema
             if (definitionKeys[0] === '#') {
                 // Find the replacement value for the reference
                 let refReplacement = deepFind(rootSchema, definitionKeys.splice(1));
-                
+
                 // Apply overrides
                 if (isPlainObject(refReplacement)) {
                     let itemWithoutRef = item;
@@ -47,7 +47,7 @@ export default function resolveReferences(rootSchema) {
         }
 
         // If this item is a object: loop it's keys and recurse on them
-        if (item instanceof Object) {
+        if (isPlainObject(item)) {
             Object.keys(item).map((key) => {
                 if (item instanceof Object) {
                     item[key] = resolveChildReferences(item[key]);
