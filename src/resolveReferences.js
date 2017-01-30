@@ -4,11 +4,11 @@ import isPlainObject from 'lodash/isPlainObject';
 export default function resolveReferences(rootSchema) {
     const deepFind = (schema, keys) => {
         if (keys.length == 0) {
-            throw new Exception('At least one key must be passed for deepFind()')
+            throw new Exception('At least one key must be passed for deepFind()');
         }
 
         if (keys.length == 1) {
-            return schema[keys[0]]
+            return schema[keys[0]];
         }
 
         return deepFind(schema[keys[0]], keys.splice(1));
@@ -49,7 +49,7 @@ export default function resolveReferences(rootSchema) {
         // If this item is a object: loop it's keys and recurse on them
         if (isPlainObject(item)) {
             Object.keys(item).map((key) => {
-                if (item instanceof Object) {
+                if (isPlainObject(item)) {
                     item[key] = resolveChildReferences(item[key]);
                 }
             });

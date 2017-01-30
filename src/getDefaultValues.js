@@ -42,7 +42,5 @@ export default function getDefaultValues(schema, defaults={}) {
     }
 
     const fields = {};
-    let val = loop(schema.properties, fields, defaults);
-    debugger;
-    return val;
+    return loop(schema.properties, fields, defaults);
 }
