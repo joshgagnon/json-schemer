@@ -13,7 +13,7 @@ export default function injectContext(FormComponent) {
             const onChange = fields[key][source].onChange;
             fields[key][source].onChange = (event) => {
                 onChange(event);
-                const result = context[inputSelectSource(schemaProperties)].find(f => f[source] === event);
+                const { _keyIndex, ...result } = context[inputSelectSource(schemaProperties)].find(f => f[source] === event);
                 result && Object.keys(result).map(k => {
                     if(k !== source && fields[key][k]){
                         fields[key][k].onChange(result[k]);
