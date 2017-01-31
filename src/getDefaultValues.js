@@ -1,13 +1,19 @@
 import getKey from './getKey';
-import { defaultSource } from './utils';
+import { defaultSource, mapTo } from './utils';
 
 // Appears to not be populating default on list items
 export default function getDefaultValues(schema, context={}) {
     function loop(props, fields) {
         Object.keys(props).map(key => {
+            // debugger;
             // If item has a default source, set the default from the correct source
             if (defaultSource(props[key]) && context[defaultSource(props[key])]) {
                 props[key].default = context[defaultSource(props[key])];
+            }
+
+            // Map string fields directly to values in context
+            if (mapTo(props[key]) && context[mapTo(props[key])]) {
+                props[key].default = context[mapTo(props[key])];
             }
             
             if (props[key].default) {

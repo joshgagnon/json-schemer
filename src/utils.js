@@ -28,6 +28,10 @@ export function inputSource(fieldProps){
     return getIn(fieldProps, ['x-hints', "form", "source"]);
 }
 
+export function mapTo(fieldProps){
+    return getIn(fieldProps, ['x-hints', "form", "mapTo"]);
+}
+
 export function oneOfMatchingSchema(fieldProps, values){
     const field = oneOfField(fieldProps);
     if(!field || !fieldProps.oneOf){

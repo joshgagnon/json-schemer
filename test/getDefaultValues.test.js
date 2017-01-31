@@ -121,4 +121,34 @@ describe('Get Default Values', function() {
         actual.should.be.deep.equal(expected);
         done();
     });
+
+    describe('Context', function() {
+        it('should x-hints mapTo option', function(done) {
+            const schema = {
+                "properties": {
+                    "string": {
+                        "type": "string",
+                        "x-hints": {
+                            "form": {
+                                "mapTo": "stringMap"
+                            }
+                        }
+                    }
+                }
+            };
+
+            const context = {
+                "stringMap": "testing string"
+            };
+
+            const expected = {
+                "string": "testing string"
+            };
+
+            const actual = getDefaultValues(schema, context);
+
+            actual.should.be.deep.equal(expected);
+            done();
+        });
+    });
 });
