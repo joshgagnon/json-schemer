@@ -13,26 +13,23 @@ export default function getDefaultValues(schema, context={}) {
             if (props[key].default) {
                 fields[key] = props[key].default;
             }
-
+            
             if (props[key].type === 'object') {
-                let obj = fields[key] || {};
-                loop(props[key].properties, obj);
-                fields[key] = obj;
+                const nextFields = fields[key] || {};
+                fields[key] = loop(props[key].properties, nextFields);
             }
-            else if (props[key].type === 'array') {
-                if (props[key].items.type === "object") {
-                    let obj = fields[key] || [];
+            else if (props[key].type === 'array' && props[key].items.type === "object") {
+                let obj = fields[key] || [];
 
-                    loop(props[key].items.properties, obj);
-                    
-                    if (props[key].items.oneOf) {
-                        obj.map(o => props[key].items.oneOf.map(oneOf => {
-                            loop(oneOf.properties, o);
-                        }));
-                    }
-                    
-                    fields[key] = obj;
+                loop(props[key].items.properties, obj);
+                
+                if (props[key].items.oneOf) {
+                    obj.map(o => props[key].items.oneOf.map(oneOf => {
+                        loop(oneOf.properties, o);
+                    }));
                 }
+                
+                fields[key] = obj;
             }
 
             if (props[key].oneOf) {
