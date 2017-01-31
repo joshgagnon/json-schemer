@@ -4,33 +4,15 @@ function getIn(obj, fields){
     }, obj);
 }
 
-function oneOfField(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "selector"])
-}
+const oneOfField = fieldProps => getIn(fieldProps, ['x-hints', "form", "selector"]);
 
-export function componentType(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "inputComponent"])
-}
-
-export function addItem(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "addItem"]) || 'Add Item';
-}
-
-export function inputSelectSource(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "selectFromSource"]);
-}
-
-export function defaultSource(fieldProps) {
-    return getIn(fieldProps, ['x-hints', "form", "defaultSource"]);
-}
-
-export function inputSource(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "source"]);
-}
-
-export function mapTo(fieldProps){
-    return getIn(fieldProps, ['x-hints', "form", "mapTo"]);
-}
+export const componentType = fieldProps => getIn(fieldProps, ['x-hints', "form", "inputComponent"]);
+export const addItem = fieldProps => getIn(fieldProps, ['x-hints', "form", "addItem"]) || 'Add Item';
+export const inputSelectSource = fieldProps => getIn(fieldProps, ['x-hints', "form", "selectFromSource"]);
+export const defaultSource = fieldProps => getIn(fieldProps, ['x-hints', "form", "defaultSource"]);
+export const inputSource = fieldProps => getIn(fieldProps, ['x-hints', "form", "source"]);
+export const mapTo = fieldProps => getIn(fieldProps, ['x-hints', "form", "mapTo"]);
+export const fieldDisplayLevel = fieldProps => getIn(fieldProps, ['x-hints', "form", "display"]);
 
 export function oneOfMatchingSchema(fieldProps, values){
     const field = oneOfField(fieldProps);

@@ -5,7 +5,6 @@ import { defaultSource, mapTo } from './utils';
 export default function getDefaultValues(schema, context={}) {
     function loop(props, fields) {
         Object.keys(props).map(key => {
-            // debugger;
             // If item has a default source, set the default from the correct source
             if (defaultSource(props[key]) && context[defaultSource(props[key])]) {
                 props[key].default = context[defaultSource(props[key])];
