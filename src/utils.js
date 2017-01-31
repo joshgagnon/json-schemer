@@ -20,6 +20,10 @@ export function inputSelectSource(fieldProps){
     return getIn(fieldProps, ['x-hints', "form", "selectFromSource"]);
 }
 
+export function defaultSource(fieldProps) {
+    return getIn(fieldProps, ['x-hints', "form", "defaultSource"]);
+}
+
 export function inputSource(fieldProps){
     return getIn(fieldProps, ['x-hints', "form", "source"]);
 }
