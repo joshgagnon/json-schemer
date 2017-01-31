@@ -47,8 +47,5 @@ export default function getDefaultValues(schema, context={}) {
     }
 
     const fields = {};
-    const vals = loop(schema.properties, fields);
-    console.log('dadada');
-    console.log(vals);
-    return vals;
+    return loop(schema.properties, fields);
 }
