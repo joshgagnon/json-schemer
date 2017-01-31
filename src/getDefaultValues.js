@@ -13,7 +13,8 @@ export default function getDefaultValues(schema, context={}) {
             if (props[key].default) {
                 fields[key] = props[key].default;
             }
-            else if (props[key].type === 'object') {
+
+            if (props[key].type === 'object') {
                 let obj = fields[key] || {};
                 loop(props[key].properties, obj);
                 fields[key] = obj;
@@ -21,7 +22,7 @@ export default function getDefaultValues(schema, context={}) {
             else if (props[key].type === 'array') {
                 if (props[key].items.type === "object") {
                     let obj = fields[key] || [];
-                    // TODO: add keyIndex default
+
                     loop(props[key].items.properties, obj);
                     
                     if (props[key].items.oneOf) {
