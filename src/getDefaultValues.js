@@ -5,10 +5,8 @@ import { defaultSource } from './utils';
 export default function getDefaultValues(schema, context={}) {
     function loop(props, fields) {
         Object.keys(props).map(key => {
+            // If item has a default source, set the default from the correct source
             if (defaultSource(props[key]) && context[defaultSource(props[key])]) {
-                // debugger
-                // const source = inputSource(schemaProperties);
-                // fields[key][source] = context[defaultSource(schemaProperties)].map(f => f[source]);
                 props[key].default = context[defaultSource(props[key])];
             }
             
@@ -19,7 +17,8 @@ export default function getDefaultValues(schema, context={}) {
                 let obj = fields[key] || {};
                 loop(props[key].properties, obj);
                 fields[key] = obj;
-            } else if (props[key].type === 'array') {
+            }
+            else if (props[key].type === 'array') {
                 if (props[key].items.type === "object") {
                     let obj = fields[key] || [];
                     // TODO: add keyIndex default
