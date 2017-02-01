@@ -11,7 +11,7 @@ function inferDefault(prop, context) {
     if (mapTo(prop) && context[mapTo(prop)]) {
         return context[mapTo(prop)];
     }
-
+    
     // Conditional map to
     if (conditionalDefault(prop) && typeof context[conditionalDefault(prop).conditional] === 'boolean') {
         if (context[conditionalDefault(prop).conditional]) {
