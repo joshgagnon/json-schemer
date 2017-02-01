@@ -122,8 +122,8 @@ describe('Get Default Values', function() {
         done();
     });
 
-    describe('Context', function() {
-        it('should x-hints mapTo option', function(done) {
+    describe('mapTo', function() {
+        it('should set default with value in context using the index from mapTo', function(done) {
             const schema = {
                 "properties": {
                     "string": {
@@ -151,4 +151,70 @@ describe('Get Default Values', function() {
             done();
         });
     });
+
+    describe('conditionalDefault', function() {
+        it('conditional is true', function(done) {
+            const schema = {
+                "properties": {
+                    "val": {
+                        "type": "string",
+                        "x-hints": {
+                            "form": {
+                                "conditionalDefault": {
+                                    "conditional": "conditional",
+                                    "trueValue": "true",
+                                    "falseValue": "false"
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            const context = {
+                "conditional": true
+            };
+
+            const expected = {
+                "val": "true"
+            };
+
+            const actual = getDefaultValues(schema, context);
+
+            actual.should.be.deep.equal(expected);
+            done();
+        });
+
+        it('conditional is false', function(done) {
+            const schema = {
+                "properties": {
+                    "val": {
+                        "type": "string",
+                        "x-hints": {
+                            "form": {
+                                "conditionalDefault": {
+                                    "conditional": "conditional",
+                                    "trueValue": "true",
+                                    "falseValue": "false"
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            const context = {
+                "conditional": false
+            };
+
+            const expected = {
+                "val": "false"
+            };
+
+            const actual = getDefaultValues(schema, context);
+
+            actual.should.be.deep.equal(expected);
+            done();
+        });
+    })
 });

@@ -12,6 +12,7 @@ export const inputSelectSource = fieldProps => getIn(fieldProps, ['x-hints', "fo
 export const defaultSource = fieldProps => getIn(fieldProps, ['x-hints', "form", "defaultSource"]);
 export const inputSource = fieldProps => getIn(fieldProps, ['x-hints', "form", "source"]);
 export const mapTo = fieldProps => getIn(fieldProps, ['x-hints', "form", "mapTo"]);
+export const conditionalDefault = fieldProps => getIn(fieldProps, ['x-hints', "form", "conditionalDefault"]);
 export const fieldDisplayLevel = fieldProps => getIn(fieldProps, ['x-hints', "form", "display"]);
 
 export function oneOfMatchingSchema(fieldProps, values){
