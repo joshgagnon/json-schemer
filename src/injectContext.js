@@ -7,20 +7,28 @@ export default function injectContext(FormComponent) {
         return <FormComponent {...props} fields={fields} />;
     }
 
-    function interceptChangesAndInject(schemaProperties, key, fields, context){
+    function interceptChangesAndInject(schemaProperties, key, fields, context) {
         if (inputSelectSource(schemaProperties) && fields[key]) {
             const source = inputSource(schemaProperties);
             const onChange = fields[key][source].onChange;
+
             fields[key][source].onChange = (event) => {
                 onChange(event);
-                const { _keyIndex, ...result } = context[inputSelectSource(schemaProperties)].find(f => f[source] === event);
-                result && Object.keys(result).map(k => {
-                    if(k !== source && fields[key][k]){
-                        fields[key][k].onChange(result[k]);
-                    }
-                });
+
+                const contextEventMatch = context[inputSelectSource(schemaProperties)].find(f => f[source] === event);
+
+                if (contextEventMatch) {
+                    const { _keyIndex, ...result } = contextEventMatch;
+
+                    result && Object.keys(result).map(k => {
+                        if (k !== source && fields[key][k]) {
+                            fields[key][k].onChange(result[k]);
+                        }
+                    });
+                }
             }
-            if(context[inputSelectSource(schemaProperties)]){
+
+            if (context[inputSelectSource(schemaProperties)]) {
                 fields[key][source].comboData = context[inputSelectSource(schemaProperties)].map(f => f[source]);
             }
         }
