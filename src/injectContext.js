@@ -78,7 +78,6 @@ export default function injectContext(FormComponent) {
 
                 // If the source exists in context: add that item of context as the comboData.
                 if (sourceValues) {
-                    // if (field.name.name.startsWith('resolutionOptions.signatures[0].signatories')) debugger;
                     field[sourceItem.field].comboData = sourceValues.map(f => f[sourceItem.property]);
                 }
             });
