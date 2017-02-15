@@ -7,8 +7,8 @@ export default function injectContext(FormComponent) {
         return <FormComponent {...props} fields={fields} />;
     };
 
-    function interceptChangesAndInject(schemaProperties, key, fields, context) {
-        if (inputSelectSource(schemaProperties) && fields[key]) {
+    function interceptChangesAndInject(schemaProperties, field, context) {
+        if (inputSelectSource(schemaProperties) && field) {
             // Get the source
             let source = inputSource(schemaProperties);
 
@@ -26,18 +26,20 @@ export default function injectContext(FormComponent) {
                 // Save the original onChange as _originalOnChange, so we can call it later.
                 // Only do this is the original onChange isn't set (otherwise we'll be saving)
                 // a non-original onChange
-                if (fields[key][sourceItem.field]._originalOnChange === undefined) {
-                    fields[key][sourceItem.field]._originalOnChange = fields[key][sourceItem.field].onChange;
+                if (field[sourceItem.field]._originalOnChange === undefined) {
+                    field[sourceItem.field]._originalOnChange = field[sourceItem.field].onChange;
                 }
 
-                fields[key][sourceItem.field].onChange = (newValue) => {
+                field[sourceItem.field].onChange = (newValue) => {
                     // Take the string the user selected and get the object in context it belongs to
                     const selectedObject = context[inputSelectSource(schemaProperties)].find(f => f[sourceItem.property] === newValue);
 
+                    // Call the original onChange() for all siblings, so they
+                    // can all update with the change to their sibling
                     if (selectedObject) {
-                        Object.keys(selectedObject).map(selectedObjectKey => {
-                            if (selectedObjectKey !== '_keyIndex' && fields[key][selectedObjectKey]) {
-                                fields[key][selectedObjectKey]._originalOnChange(selectedObject[selectedObjectKey]);
+                        Object.keys(selectedObject).map(key => {
+                            if (key !== '_keyIndex' && field[key]) {
+                                field[key]._originalOnChange(selectedObject[key]);
                             }
                         });
                     }
@@ -45,7 +47,7 @@ export default function injectContext(FormComponent) {
 
                 // If the source exists in context: add that item of context as the comboData.
                 if (context[inputSelectSource(schemaProperties)]) {
-                    fields[key][sourceItem.field].comboData = context[inputSelectSource(schemaProperties)].map(f => f[sourceItem.property]);
+                    field[sourceItem.field].comboData = context[inputSelectSource(schemaProperties)].map(f => f[sourceItem.property]);
                 }
             });
         }
@@ -69,7 +71,7 @@ export default function injectContext(FormComponent) {
                         });
 
                         fields[key] && fields[key].map((field, index) => {
-                            interceptChangesAndInject(schemaProperties[key].items,  index, fields[key], context);
+                            interceptChangesAndInject(schemaProperties[key].items, fields[key][index], context);
                         });
 
                         if(schemaProperties[key].items.oneOf) {
@@ -88,7 +90,7 @@ export default function injectContext(FormComponent) {
                     }
                 }
 
-                interceptChangesAndInject(schemaProperties[key], key, fields, context)
+                interceptChangesAndInject(schemaProperties[key], fields[key], context)
             });
 
             return fields;
