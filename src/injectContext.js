@@ -1,28 +1,51 @@
 import React from 'react';
-import { inputSelectSource, inputSource, oneOfMatchingSchema }  from './utils';
+import { getSourceLocation, inputSource, oneOfMatchingSchema, getIn }  from './utils';
+
+let topLevelFields;
 
 export default function injectContext(FormComponent) {
     const Injector = (props) => {
+        topLevelFields = props.fields;
+
         const fields = injectContext(props.schema.properties, props.fields, props.context);
         return <FormComponent {...props} fields={fields} />;
     };
 
-    function interceptChangesAndInject(schemaProperties, field, context) {
-        if (inputSelectSource(schemaProperties) && field) {
+    function getSourceValues(sourceLocation, context, fieldPath) {
+        const splitPath = sourceLocation.split('../');
+
+        // If the length of split path is more than one, the source location is relative
+        if (splitPath.length > 1) {
+            const levelsBack = splitPath.length - 1;
+            const fieldSource = splitPath[splitPath.length -1]; // Field source is the last item in split path
+            const parentSource = fieldPath.splice(0, fieldPath.length - levelsBack);
+
+            return getIn(topLevelFields, parentSource.concat(fieldSource, 'value'));
+        }
+
+        return context[sourceLocation];
+    }
+
+    function interceptChangesAndInject(schemaProperties, field, context, fieldPath) {
+        const sourceLocation = getSourceLocation(schemaProperties);
+
+        if (sourceLocation && field) {
             // Get the source
-            let source = inputSource(schemaProperties);
+            let sources = inputSource(schemaProperties);
 
             // Source will either be an array of objects with field and property, or a
             // string that is both the field and property. To make things simpler, if
             // the source is a string, convert it to the array of objects format
-            if (!Array.isArray(source)) {
-                source = [{
-                    field: source,
-                    property: source
+            if (!Array.isArray(sources)) {
+                sources = [{
+                    field: sources,
+                    property: sources
                 }];
             }
 
-            source.map((sourceItem) => {
+            sources.map((sourceItem) => {
+                const sourceValues = getSourceValues(sourceLocation, context, fieldPath);
+
                 // Save the original onChange as _originalOnChange, so we can call it later.
                 // Only do this is the original onChange isn't set (otherwise we'll be saving)
                 // a non-original onChange
@@ -32,7 +55,7 @@ export default function injectContext(FormComponent) {
 
                 field[sourceItem.field].onChange = (newValue) => {
                     // Take the string the user selected and get the object in context it belongs to
-                    const selectedObject = context[inputSelectSource(schemaProperties)].find(f => f[sourceItem.property] === newValue);
+                    const selectedObject = sourceValues.find(f => f[sourceItem.property] === newValue);
 
                     // Call the original onChange() for all siblings, so they
                     // can all update with the change to their sibling
@@ -46,57 +69,57 @@ export default function injectContext(FormComponent) {
                 };
 
                 // If the source exists in context: add that item of context as the comboData.
-                if (context[inputSelectSource(schemaProperties)]) {
-                    field[sourceItem.field].comboData = context[inputSelectSource(schemaProperties)].map(f => f[sourceItem.property]);
+                if (sourceValues) {
+                    field[sourceItem.field].comboData = sourceValues.map(f => f[sourceItem.property]);
                 }
             });
         }
     }
 
     function injectContext(schemaProperties, fields, context) {
-        function loop(schemaProperties, fields) {
+        function loop(schemaProperties, fields, parentPath) {
             fields && Object.keys(schemaProperties).map(key => {
+                const currentPath = parentPath.concat(key);
+
                 if (schemaProperties[key].type === 'object') {
-                    loop(schemaProperties[key].properties, fields[key]);
+                    loop(schemaProperties[key].properties, fields[key], currentPath);
                     if (schemaProperties[key].oneOf) {
-                        schemaProperties[key].oneOf.map(oneOf => {
-                            loop(oneOf.properties, fields[key]);
+                        schemaProperties[key].oneOf.map((oneOf) => {
+                            loop(oneOf.properties, fields[key], currentPath);
                         });
                     }
                 }
-                else if (schemaProperties[key].type === 'array') {
-                    if (schemaProperties[key].items.type === "object") {
-                        fields[key] && fields[key].map(f => {
-                            loop(schemaProperties[key].items.properties, f);
+                else if (schemaProperties[key].type === 'array' && schemaProperties[key].items.type === "object") {
+                    fields[key] && fields[key].map((f, index) => {
+                        loop(schemaProperties[key].items.properties, f, currentPath.concat(index));
+                    });
+
+                    fields[key] && fields[key].map((field, index) => {
+                        interceptChangesAndInject(schemaProperties[key].items, fields[key][index], context, currentPath);
+                    });
+
+                    if (schemaProperties[key].items.oneOf) {
+                        fields[key].map((f, index) => {
+                            let values = Object.keys(f).reduce((acc, k) => {
+                                acc[k] = f[k].value; return acc;
+                            }, {});
+
+                            let result = oneOfMatchingSchema(schemaProperties[key].items, values);
+
+                            if (result) {
+                                loop(result.properties, f, currentPath.concat(index));
+                            }
                         });
-
-                        fields[key] && fields[key].map((field, index) => {
-                            interceptChangesAndInject(schemaProperties[key].items, fields[key][index], context);
-                        });
-
-                        if(schemaProperties[key].items.oneOf) {
-                            fields[key].map(f => {
-                                let values = Object.keys(f).reduce((acc, k) => {
-                                    acc[k] = f[k].value; return acc;
-                                }, {});
-
-                                let result = oneOfMatchingSchema(schemaProperties[key].items, values);
-
-                                if (result) {
-                                     loop(result.properties, f);
-                                }
-                            });
-                        }
                     }
                 }
 
-                interceptChangesAndInject(schemaProperties[key], fields[key], context)
+                interceptChangesAndInject(schemaProperties[key], fields[key], context, currentPath)
             });
 
             return fields;
         }
 
-        return loop(schemaProperties, fields);
+        return loop(schemaProperties, fields, []);
     }
 
     return Injector;
