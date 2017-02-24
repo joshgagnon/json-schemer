@@ -4,6 +4,7 @@ import { defaultSource, mapTo, conditionalDefault } from './utils';
 function inferDefault(prop, context) {
     // If item has a default source, set the default from the correct source
     if (defaultSource(prop) && context[defaultSource(prop)]) {
+        // debugger;
         return context[defaultSource(prop)];
     }
 
@@ -29,8 +30,19 @@ export default function getDefaultValues(schema, context={}) {
     function loop(props, fields) {
         Object.keys(props).map(key => {
             // Check we need to infer some king of default, then set it
-            const defaultValue = inferDefault(props[key], context);
+            let defaultValue = inferDefault(props[key], context);
+
             if (defaultValue) {
+                // If both default value and the definitions default are arrays, merge each object in the array
+                // THis means we can set defaults in the definitions for properties that don't exist in the default source
+                if (props[key].default) {
+                    if (Array.isArray(defaultValue) && props[key].default.length === 1) {
+                        defaultValue = defaultValue.map((value) => {
+                            return { ...props[key].default[0], ...value }
+                        })
+                    }
+                }
+
                 props[key].default = defaultValue;
             }
             
