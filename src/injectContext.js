@@ -69,6 +69,10 @@ export default function injectContext(FormComponent) {
                         if (selectedObject) {
                             Object.keys(selectedObject).map(key => {
                                 if (key !== '_keyIndex' && key !== sourceItem.field && field[key]) {
+                                    if (field[key]._originalOnChange === undefined) {
+                                        field[key]._originalOnChange = field[key].onChange;
+                                    }
+
                                     field[key]._originalOnChange(selectedObject[key]);
                                 }
                             });
