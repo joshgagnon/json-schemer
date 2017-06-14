@@ -30,5 +30,5 @@ export default function getFields(schema) {
         });
     }
     loop(schema.properties, '');
-    return fields;
+    return Array.from(new Set(fields));
 }
