@@ -12,7 +12,7 @@ function inferDefault(prop, context) {
     if (mapTo(prop) && context[mapTo(prop)]) {
         return context[mapTo(prop)];
     }
-    
+
     // Conditional map to
     if (conditionalDefault(prop) && typeof context[conditionalDefault(prop).conditional] === 'boolean') {
         if (context[conditionalDefault(prop).conditional]) {
@@ -45,12 +45,12 @@ export default function getDefaultValues(schema, context={}) {
 
                 props[key].default = defaultValue;
             }
-            
+
             // If this property has a default (inferred above or defined in schema), set it in the fields here
             if (props[key].default) {
                 fields[key] = props[key].default;
             }
-            
+
             if (props[key].type === 'object') {
                 const nextFields = fields[key] || {};
                 fields[key] = loop(props[key].properties, nextFields);
@@ -59,13 +59,13 @@ export default function getDefaultValues(schema, context={}) {
                 let obj = fields[key] || [];
 
                 loop(props[key].items.properties, obj);
-                
+
                 if (props[key].items.oneOf) {
                     obj.map(o => props[key].items.oneOf.map(oneOf => {
                         loop(oneOf.properties, o);
                     }));
                 }
-                
+
                 fields[key] = obj;
             }
 

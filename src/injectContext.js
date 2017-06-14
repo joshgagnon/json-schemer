@@ -29,7 +29,6 @@ export default function injectContext(FormComponent) {
 
     function interceptChangesAndInject(schemaProperties, field, context, fieldPath) {
         const sourceLocation = getSourceLocation(schemaProperties);
-
         if (sourceLocation && field) {
             // Get the source
             let sources = inputSource(schemaProperties);
@@ -43,10 +42,8 @@ export default function injectContext(FormComponent) {
                     property: sources
                 }];
             }
-
             sources.map((sourceItem) => {
                 const sourceValues = getSourceValues(sourceLocation, context, fieldPath);
-
                 // Save the original onChange as _originalOnChange, so we can call it later.
                 // Only do this is the original onChange isn't set (otherwise we'll be saving)
                 // a non-original onChange
