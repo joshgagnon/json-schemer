@@ -31,7 +31,6 @@ export default function getDefaultValues(schema, context={}) {
         Object.keys(props).map(key => {
             // Check we need to infer some king of default, then set it
             let defaultValue = inferDefault(props[key], context);
-
             if (defaultValue) {
                 // If both default value and the definitions default are arrays, merge each object in the array
                 // THis means we can set defaults in the definitions for properties that don't exist in the default source
@@ -42,6 +41,7 @@ export default function getDefaultValues(schema, context={}) {
                         })
                     }
                 }
+
 
                 props[key].default = defaultValue;
             }
@@ -57,18 +57,17 @@ export default function getDefaultValues(schema, context={}) {
             }
             else if (props[key].type === 'array' && props[key].items.type === "object") {
                 let obj = fields[key] || [];
-
-                loop(props[key].items.properties, obj);
-
-                if (props[key].items.oneOf) {
-                    obj.map(o => props[key].items.oneOf.map(oneOf => {
-                        loop(oneOf.properties, o);
-                    }));
-                }
+                obj.map((o, i) => {
+                    obj[i] = loop(props[key].items.properties, o);
+                    if (props[key].items.oneOf) {
+                        props[key].items.oneOf.map(oneOf => {
+                            obj[i] = loop(oneOf.properties, obj[i]);
+                        });
+                    }
+                });
 
                 fields[key] = obj;
             }
-
             if (props[key].oneOf) {
                 let obj = fields[key] || {};
                 props[key].oneOf.map(o => {
