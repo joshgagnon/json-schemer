@@ -92,36 +92,6 @@ describe('Get Default Values', function() {
         done();
     });
 
-    it('should set object array defaults', function(done) {
-        const schema = {
-            "properties": {
-                "objectArray": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "name": { "type": "string" }
-                        }
-                    },
-                    "default": [{"name": "Harry"}, {"name": "Mark"}, {"name": "John"}],
-                }
-            }
-        };
-
-        const expected = {
-            "objectArray": [
-                {"name": "Harry"},
-                {"name": "Mark"},
-                {"name": "John"}
-            ]
-        };
-
-        const actual = getDefaultValues(schema);
-
-        actual.should.be.deep.equal(expected);
-        done();
-    });
-
     describe('mapTo', function() {
         it('should set default with value in context using the index from mapTo', function(done) {
             const schema = {
@@ -216,5 +186,109 @@ describe('Get Default Values', function() {
             actual.should.be.deep.equal(expected);
             done();
         });
+    });
+
+    it('should set object array deep defaults', function(done) {
+        const schema = {
+            "properties": {
+                "objectArray": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "object",
+                                "properties": {
+                                    "firstName": { "type": "string" },
+                                    "lastName": { "type": "string" }
+                                }
+                            }
+                        }
+                    },
+                    "default": [{
+                        "name": {
+                            "firstName": "x",
+                            "lastName": "y"
+                        }
+                    }],
+                    "x-hints": {
+                        "form": {
+                            "defaultSource": "key"
+                        }
+                    }
+                }
+            }
+        };
+
+        const expected = {
+            "objectArray": [
+                { "name": { "firstName": "x", "lastName": "y"} },
+                { "name": { "firstName": "x", "lastName": "y"} },
+                { "name": { "firstName": "x", "lastName": "y"} }
+            ]
+        };
+
+        const context = {
+            "key": [{}, {}, {}]
+        }
+
+        const actual = getDefaultValues(schema, context);
+
+        console.log(actual);
+
+        actual.should.be.deep.equal(expected);
+        done();
+    });
+
+    it('should set object array deep defaults', function(done) {
+        const schema = {
+            "properties": {
+                "objectArray": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "object",
+                                "properties": {
+                                    "firstName": { "type": "string" },
+                                    "lastName": { "type": "string" }
+                                }
+                            }
+                        },
+                        "default": {
+                            "name": {
+                                "firstName": "x",
+                                "lastName": "y"
+                            }
+                        },
+                    },
+                    "x-hints": {
+                        "form": {
+                            "defaultSource": "key"
+                        }
+                    }
+                }
+            }
+        };
+
+        const expected = {
+            "objectArray": [
+                { "name": { "firstName": "x", "lastName": "y"} },
+                { "name": { "firstName": "x", "lastName": "y"} },
+                { "name": { "firstName": "x", "lastName": "y"} }
+            ]
+        };
+
+        const context = {
+            "key": [{}, {}, {}]
+        }
+
+        const actual = getDefaultValues(schema, context);
+
+        console.log(actual);
+
+        actual.should.be.deep.equal(expected);
+        done();
     });
 });
