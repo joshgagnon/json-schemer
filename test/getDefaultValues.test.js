@@ -188,7 +188,7 @@ describe('Get Default Values', function() {
         });
     });
 
-    it('should set object array deep defaults', function(done) {
+    it('should set object array defaults', function(done) {
         const schema = {
             "properties": {
                 "objectArray": {
@@ -234,7 +234,6 @@ describe('Get Default Values', function() {
 
         const actual = getDefaultValues(schema, context);
 
-        console.log(actual);
 
         actual.should.be.deep.equal(expected);
         done();
@@ -285,8 +284,6 @@ describe('Get Default Values', function() {
         }
 
         const actual = getDefaultValues(schema, context);
-
-        console.log(actual);
 
         actual.should.be.deep.equal(expected);
         done();

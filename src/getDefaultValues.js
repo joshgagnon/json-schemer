@@ -55,9 +55,14 @@ export default function getDefaultValues(schema, context={}) {
             else if (props[key].type === 'array' && props[key].items.type === "object") {
                 let obj = fields[key] || [];
                 obj.map((o, i) => {
+
                     obj[i] = loop(props[key].items.properties, o);
+                    if(props[key].items.default){
+                        obj[i] = {...obj[i], ...props[key].items.default}
+                    }
                     if (props[key].items.oneOf) {
                         props[key].items.oneOf.map(oneOf => {
+
                             obj[i] = loop(oneOf.properties, obj[i]);
                         });
                     }
