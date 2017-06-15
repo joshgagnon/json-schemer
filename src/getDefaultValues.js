@@ -4,7 +4,6 @@ import { defaultSource, mapTo, conditionalDefault } from './utils';
 function inferDefault(prop, context) {
     // If item has a default source, set the default from the correct source
     if (defaultSource(prop) && context[defaultSource(prop)]) {
-        // debugger;
         return context[defaultSource(prop)];
     }
 
@@ -12,7 +11,7 @@ function inferDefault(prop, context) {
     if (mapTo(prop) && context[mapTo(prop)]) {
         return context[mapTo(prop)];
     }
-    
+
     // Conditional map to
     if (conditionalDefault(prop) && typeof context[conditionalDefault(prop).conditional] === 'boolean') {
         if (context[conditionalDefault(prop).conditional]) {
@@ -31,7 +30,6 @@ export default function getDefaultValues(schema, context={}) {
         Object.keys(props).map(key => {
             // Check we need to infer some king of default, then set it
             let defaultValue = inferDefault(props[key], context);
-
             if (defaultValue) {
                 // If both default value and the definitions default are arrays, merge each object in the array
                 // THis means we can set defaults in the definitions for properties that don't exist in the default source
@@ -42,33 +40,34 @@ export default function getDefaultValues(schema, context={}) {
                         })
                     }
                 }
-
-                props[key].default = defaultValue;
+                fields[key] = defaultValue;
             }
-            
             // If this property has a default (inferred above or defined in schema), set it in the fields here
-            if (props[key].default) {
-                fields[key] = props[key].default;
-            }
-            
+
             if (props[key].type === 'object') {
                 const nextFields = fields[key] || {};
                 fields[key] = loop(props[key].properties, nextFields);
+                if (props[key].default) {
+                    fields[key] = {...fields[key], ...props[key].default};
+                }
+
             }
             else if (props[key].type === 'array' && props[key].items.type === "object") {
                 let obj = fields[key] || [];
+                obj.map((o, i) => {
+                    obj[i] = loop(props[key].items.properties, o);
+                    if (props[key].items.oneOf) {
+                        props[key].items.oneOf.map(oneOf => {
+                            obj[i] = loop(oneOf.properties, obj[i]);
+                        });
+                    }
+                });
 
-                loop(props[key].items.properties, obj);
-                
-                if (props[key].items.oneOf) {
-                    obj.map(o => props[key].items.oneOf.map(oneOf => {
-                        loop(oneOf.properties, o);
-                    }));
-                }
-                
                 fields[key] = obj;
             }
-
+            else if(props[key].default){
+                fields[key] = fields[key] || props[key].default;
+            }
             if (props[key].oneOf) {
                 let obj = fields[key] || {};
                 props[key].oneOf.map(o => {

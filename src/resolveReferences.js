@@ -23,7 +23,6 @@ export default function resolveReferences(rootSchema) {
             if (definitionKeys[0] === '#') {
                 // Find the replacement value for the reference
                 let refReplacement = deepFind(rootSchema, definitionKeys.splice(1));
-
                 // Apply overrides
                 if (isPlainObject(refReplacement)) {
                     let itemWithoutRef = item;
@@ -42,7 +41,7 @@ export default function resolveReferences(rootSchema) {
         // If this item is an array: loop it's values and recurse on them
         if (Array.isArray(item)) {
             item.map((innerItem, i) => {
-                innerItem = resolveChildReferences(innerItem);
+                item[i] = resolveChildReferences(innerItem);
             });
         }
 
