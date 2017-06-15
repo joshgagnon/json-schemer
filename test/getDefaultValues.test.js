@@ -216,5 +216,57 @@ describe('Get Default Values', function() {
             actual.should.be.deep.equal(expected);
             done();
         });
-    })
+    });
+
+    it('should set object array defaults', function(done) {
+        const schema = {
+            "properties": {
+                "objectArray": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "object",
+                                "properties": {
+                                    "firstName": { "type": "string" },
+                                    "lastName": { "type": "string" }
+                                }
+                            }
+                        }
+                    },
+                    "default": [{
+                        "name": {
+                            "firstName": "x",
+                            "lastName": "y"
+                        }
+                    }],
+                    "x-hints": {
+                        "form": {
+                            "defaultSource": "key"
+                        }
+                    }
+                }
+            }
+        };
+
+        const expected = {
+            "objectArray": [
+                { "name": { "firstName": "x", "lastName": "y"} },
+                { "name": { "firstName": "x", "lastName": "y"} },
+                { "name": { "firstName": "x", "lastName": "y"} }
+            ]
+        };
+
+        const context = {
+            "key": [{}, {}, {}]
+        }
+
+        const actual = getDefaultValues(schema, context);
+
+        console.log(actual);
+
+        actual.should.be.deep.equal(expected);
+        done();
+    });
 });
