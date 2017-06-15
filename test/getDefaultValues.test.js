@@ -240,7 +240,7 @@ describe('Get Default Values', function() {
         done();
     });
 
-    it('should set object array deep defaults', function(done) {
+    it('should be able to set defaults in definition of list items', function(done) {
         const schema = {
             "properties": {
                 "objectArray": {
