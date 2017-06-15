@@ -4,7 +4,6 @@ import { defaultSource, mapTo, conditionalDefault } from './utils';
 function inferDefault(prop, context) {
     // If item has a default source, set the default from the correct source
     if (defaultSource(prop) && context[defaultSource(prop)]) {
-        // debugger;
         return context[defaultSource(prop)];
     }
 
@@ -41,19 +40,17 @@ export default function getDefaultValues(schema, context={}) {
                         })
                     }
                 }
-
-
-                props[key].default = defaultValue;
+                fields[key] = defaultValue;
             }
-
             // If this property has a default (inferred above or defined in schema), set it in the fields here
-            if (props[key].default) {
-                fields[key] = props[key].default;
-            }
 
             if (props[key].type === 'object') {
                 const nextFields = fields[key] || {};
                 fields[key] = loop(props[key].properties, nextFields);
+                if (props[key].default) {
+                    fields[key] = {...fields[key], ...props[key].default};
+                }
+
             }
             else if (props[key].type === 'array' && props[key].items.type === "object") {
                 let obj = fields[key] || [];
@@ -67,6 +64,9 @@ export default function getDefaultValues(schema, context={}) {
                 });
 
                 fields[key] = obj;
+            }
+            else if(props[key].default){
+                fields[key] = fields[key] || props[key].default;
             }
             if (props[key].oneOf) {
                 let obj = fields[key] || {};
