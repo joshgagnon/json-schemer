@@ -218,7 +218,7 @@ describe('Get Default Values', function() {
         });
     });
 
-    it('should set object array defaults', function(done) {
+    it('should set object array deep defaults', function(done) {
         const schema = {
             "properties": {
                 "objectArray": {
