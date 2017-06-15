@@ -1,5 +1,6 @@
 import getKey from './getKey';
 import { defaultSource, mapTo, conditionalDefault } from './utils';
+import deepmerge from 'deepmerge';
 
 function inferDefault(prop, context) {
     // If item has a default source, set the default from the correct source
@@ -42,13 +43,16 @@ export default function getDefaultValues(schema, context={}) {
                 }
                 fields[key] = defaultValue;
             }
+            else if(props[key].default){
+                fields[key] = props[key].default;
+            }
             // If this property has a default (inferred above or defined in schema), set it in the fields here
 
             if (props[key].type === 'object') {
                 const nextFields = fields[key] || {};
                 fields[key] = loop(props[key].properties, nextFields);
                 if (props[key].default) {
-                    fields[key] = {...fields[key], ...props[key].default};
+                    fields[key] = deepmerge(props[key].default, fields[key]);
                 }
 
             }
@@ -58,7 +62,7 @@ export default function getDefaultValues(schema, context={}) {
 
                     obj[i] = loop(props[key].items.properties, o);
                     if(props[key].items.default){
-                        obj[i] = {...obj[i], ...props[key].items.default}
+                        obj[i] = deepmerge(props[key].items.default, obj[i]);
                     }
                     if (props[key].items.oneOf) {
                         props[key].items.oneOf.map(oneOf => {
