@@ -1,4 +1,11 @@
-import { oneOfMatchingSchema } from './utils';
+import { oneOfMatchingSchema, getIn } from './utils';
+import moment from 'moment';
+
+function getRef(obj, values){
+    if(obj && obj.$data){
+        return values[obj.$data];
+    }
+}
 
 export default function getValidate(schema) {
     return (values) => {
@@ -36,6 +43,16 @@ export default function getValidate(schema) {
                 }
                 if(required.indexOf(key) >= 0 && (!values || values[key] === undefined || values[key] === null || values[key] === '')){
                     acc[key] = ['Required.']
+                }
+                if(props[key].formatMinimum && values[key]){
+                    const min = getRef(props[key].formatMinimum, values);
+                    let  value = values[key];
+                    if(props[key].format && props[key].formatDate){
+                        value = moment(value, props[key].formatDate);
+                    }
+                    if(min && value < min){
+                        acc[key] = [props[key].errorMessage.formatMinimum]
+                    }
                 }
                 return acc;
             }, {})
