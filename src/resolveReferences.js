@@ -1,5 +1,5 @@
 import merge from 'deepmerge';
-import isPlainObject from 'lodash/isPlainObject';
+import isPlainObject from 'lodash.isplainobject';
 
 export default function resolveReferences(rootSchema) {
     const deepFind = (schema, keys) => {
