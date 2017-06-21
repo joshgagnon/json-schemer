@@ -19,10 +19,10 @@
     "deepmerge": "^1.4.4",
     "lodash": "^4.17.4",
     "lodash.clonedeep": "^4.5.0",
+    "moment": "^2.18.1",
     "react": "^15.4.2"
   },
   "devDependencies": {
-    "babel": "^6.5.2",
     "babel-cli": "^6.5.2",
     "babel-plugin-transform-export-extensions": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.22.0",
