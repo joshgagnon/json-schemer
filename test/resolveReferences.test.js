@@ -1,6 +1,7 @@
 const chai = require('chai');
-const merge = require('deepmerge');
+import merge from '../src/mergeSchemas';
 import resolveReferences from '../src/resolveReferences';
+import prepareSchema from '../src/prepareSchema';
 
 const should = chai.should();
 
@@ -195,7 +196,7 @@ describe('Resolve References', function() {
     describe('Resolve references of references', function() {
         it('Should resolve reference of reference', function(done) {
             const mergedWithReferences = merge(nestedReferences, {"testing": {"$ref": "#/definitions/straightRef"}});
-            const mergedWithResolvedReferences = merge(nestedReferences, {"testing": "someRandomText"});
+            const mergedWithResolvedReferences = prepareSchema(nestedReferences, {"testing": "someRandomText"});
 
             resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
             done();
@@ -203,7 +204,7 @@ describe('Resolve References', function() {
 
         it('Should resolve reference of object with reference', function(done) {
             const mergedWithReferences = merge(nestedReferences, {"testing": {"$ref": "#/definitions/objectWithRef"}});
-            const mergedWithResolvedReferences = merge(nestedReferences, {"testing": {"something": 21, "childRef": ["one", "two", "three"]}});
+            const mergedWithResolvedReferences = prepareSchema(nestedReferences, {"testing": {"something": 21, "childRef": ["one", "two", "three"]}});
 
             resolveReferences(mergedWithReferences).should.be.deep.equal(mergedWithResolvedReferences);
             done();
