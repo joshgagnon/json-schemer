@@ -17,8 +17,8 @@
   "author": "Paddy Moran",
   "dependencies": {
     "deepmerge": "^1.4.4",
-    "lodash": "^4.17.4",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.isplainobject": "^4.0.6",
     "moment": "^2.18.1",
     "react": "^15.4.2"
   },
