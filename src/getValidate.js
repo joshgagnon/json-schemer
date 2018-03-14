@@ -7,6 +7,8 @@ function getRef(obj, values){
     }
 }
 
+const emptyArray = [];
+
 export default function getValidate(schema) {
     return (values) => {
         let globalErrors = [];
@@ -25,7 +27,7 @@ export default function getValidate(schema) {
                     acc[key] = loop(properties, values[key], required)
                 }
                 if(props[key].type === 'array'){
-                    acc[key] = values[key].map(v => {
+                    acc[key] = (values[key] || emptyArray).map(v => {
                         let required = props[key].items.required || [];
                         const matching = oneOfMatchingSchema(props[key].items, v);
                         let properties = props[key].items.properties
