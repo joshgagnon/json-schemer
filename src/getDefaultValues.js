@@ -36,8 +36,8 @@ export default function getDefaultValues(schema, context={}) {
                 // THis means we can set defaults in the definitions for properties that don't exist in the default source
                 if (props[key].default) {
                     if (Array.isArray(defaultValue) && props[key].default.length === 1) {
-                        defaultValue = defaultValue.map((value) => {
-                            return { _keyIndex: propIndex, ...props[key].default[0], ...value }
+                        defaultValue = defaultValue.map((value, i) => {
+                            return { _keyIndex: i, ...props[key].default[0], ...value }
                         })
                     }
                 }
@@ -50,7 +50,7 @@ export default function getDefaultValues(schema, context={}) {
 
             if (props[key].type === 'object') {
                 const nextFields = fields[key] || {};
-                fields[key] = loop(props[key].properties, nextFields);
+                fields[key] = loop(props[key].properties, nextFields, index);
                 if (props[key].default) {
                     fields[key] = deepmerge(props[key].default, fields[key]);
                 }
@@ -60,14 +60,14 @@ export default function getDefaultValues(schema, context={}) {
                 let obj = fields[key] || [];
                 obj.map((o, i) => {
 
-                    obj[i] = loop(props[key].items.properties, o);
+                    obj[i] = loop(props[key].items.properties, o, i);
                     if(props[key].items.default){
                         obj[i] = deepmerge(props[key].items.default, obj[i]);
                     }
                     if (props[key].items.oneOf) {
                         props[key].items.oneOf.map(oneOf => {
 
-                            obj[i] = loop(oneOf.properties, obj[i], propIndex);
+                            obj[i] = loop(oneOf.properties, obj[i], i);
                         });
                     }
                 });
@@ -80,7 +80,7 @@ export default function getDefaultValues(schema, context={}) {
             if (props[key].oneOf) {
                 let obj = fields[key] || {};
                 props[key].oneOf.map(o => {
-                    loop(o.properties, obj);
+                    loop(o.properties, obj, index);
                 });
                 fields[key]  = obj;
             }
