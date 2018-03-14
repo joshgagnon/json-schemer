@@ -28,16 +28,24 @@ export default function getValidate(schema) {
                 }
                 if(props[key].type === 'array'){
                     acc[key] = (values[key] || emptyArray).map(v => {
-                        let required = props[key].items.required || [];
                         const matching = oneOfMatchingSchema(props[key].items, v);
-                        let properties = props[key].items.properties
-                        if(matching && matching.required){
-                            required = required.concat(matching.required);
+                        let properties = props[key].items.properties;
+                        if(properties){
+                            let required = props[key].items.required || [];
+                            if(matching && matching.required){
+                                required = required.concat(matching.required);
+                            }
+                            if(matching && matching.properties){
+                                properties = {...properties, ...matching.properties}
+                            }
+                            return loop(properties, v,  required);
                         }
-                        if(matching && matching.properties){
-                            properties = {...properties, ...matching.properties}
+                        // else, just a list
+                        else{
+                            if(!v && props[key].items.required){
+                                return ['Required.'];
+                            }
                         }
-                        return loop(properties, v,  required);
                     });
                     if(props[key].minItems && (!values[key] || values[key].length < props[key].minItems)){
                         globalErrors.push([`At least ${props[key].minItems} '${props[key].title || props[key].validationTitle}' required.`]);

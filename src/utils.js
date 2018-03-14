@@ -9,7 +9,13 @@ export const inputSource = fieldProps => getIn(fieldProps, ['x-hints', "form", "
 export const mapTo = fieldProps => getIn(fieldProps, ['x-hints', "form", "mapTo"]);
 export const conditionalDefault = fieldProps => getIn(fieldProps, ['x-hints', "form", "conditionalDefault"]);
 export const fieldDisplayLevel = fieldProps => getIn(fieldProps, ['x-hints', "form", "display"]);
-
+export function formatString(formatted) {
+    for (var i = 1; i < arguments.length; i++) {
+        var regexp = new RegExp('\\{'+(i-1)+'\\}', 'gi');
+        formatted = formatted.replace(regexp, arguments[i]);
+    }
+    return formatted;
+};
 export function getIn(obj, fields){
     return fields.reduce((obj, f) => {
         return obj ? obj[f] : null

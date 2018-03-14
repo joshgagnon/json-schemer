@@ -27,8 +27,8 @@ function inferDefault(prop, context) {
 
 // Appears to not be populating default on list items
 export default function getDefaultValues(schema, context={}) {
-    function loop(props, fields) {
-        Object.keys(props).map(key => {
+    function loop(props, fields, index=0) {
+        Object.keys(props).map((key, propIndex) => {
             // Check we need to infer some king of default, then set it
             let defaultValue = inferDefault(props[key], context);
             if (defaultValue) {
@@ -37,7 +37,7 @@ export default function getDefaultValues(schema, context={}) {
                 if (props[key].default) {
                     if (Array.isArray(defaultValue) && props[key].default.length === 1) {
                         defaultValue = defaultValue.map((value) => {
-                            return { ...props[key].default[0], ...value }
+                            return { _keyIndex: propIndex, ...props[key].default[0], ...value }
                         })
                     }
                 }
@@ -67,7 +67,7 @@ export default function getDefaultValues(schema, context={}) {
                     if (props[key].items.oneOf) {
                         props[key].items.oneOf.map(oneOf => {
 
-                            obj[i] = loop(oneOf.properties, obj[i]);
+                            obj[i] = loop(oneOf.properties, obj[i], propIndex);
                         });
                     }
                 });
