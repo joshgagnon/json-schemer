@@ -24,6 +24,7 @@ export default function getValidate(schema) {
                     if(matching && matching.properties){
                         properties = {...properties, ...matching.properties}
                     }
+
                     acc[key] = loop(properties, values[key], required)
                 }
                 if(props[key].type === 'array'){
@@ -38,6 +39,7 @@ export default function getValidate(schema) {
                             if(matching && matching.properties){
                                 properties = {...properties, ...matching.properties}
                             }
+                            console.log(required, matching)
                             return loop(properties, v,  required);
                         }
                         // else, just a list
