@@ -39,7 +39,6 @@ export default function getValidate(schema) {
                             if(matching && matching.properties){
                                 properties = {...properties, ...matching.properties}
                             }
-                            console.log(required, matching)
                             return loop(properties, v,  required);
                         }
                         // else, just a list
