@@ -31,3 +31,40 @@ export function oneOfMatchingSchema(fieldProps, values){
         return f.properties[field].enum[0] === values[field];
     })[0];
 }
+
+export function getSubSchema(schema, stepIndex) {
+    const fields = schema.wizard.steps[stepIndex].items;
+    const properties = Object.keys(schema.properties).reduce((acc, key) => {
+        if(fields.indexOf(key) >= 0){
+            acc[key] = schema.properties[key];
+        }
+        return acc;
+    }, {})
+    return {...schema, properties}
+}
+
+
+
+export function getFieldsFromErrors(errors) {
+    const fields = [];
+    (function loop(path, errors) {
+        if(!errors){
+            return;
+        }
+        else if(Array.isArray(errors)){
+            return errors.map(key => {
+                fields.push(`${path}[${key}]`);
+                loop(`${path}[${key}]`, errors[key]);
+            }, {});
+        }
+        else{
+            return Object.keys(errors).map(key => {
+                const newPath = path ? `${path}.${key}` : key;
+                fields.push(newPath);
+                loop(newPath, errors[key]);
+            }, {});
+        }
+
+    })('', errors);
+    return fields;
+}
