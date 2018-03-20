@@ -54,7 +54,7 @@ export function getFieldsFromErrors(errors) {
         else if(Array.isArray(errors)){
             return errors.map((key, index) => {
                 fields.push(`${path}[${index}]`);
-                loop(`${path}[${index}]`, errors[key]);
+                loop(`${path}[${index}]`, errors[index]);
             }, {});
         }
         else{
