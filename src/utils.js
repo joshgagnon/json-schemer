@@ -57,7 +57,7 @@ export function getFieldsFromErrors(errors) {
                 loop(`${path}[${index}]`, errors[index]);
             }, {});
         }
-        else{
+        else if(errors === Object(errors)){
             return Object.keys(errors).map(key => {
                 const newPath = path ? `${path}.${key}` : key;
                 fields.push(newPath);
