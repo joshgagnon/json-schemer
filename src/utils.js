@@ -52,9 +52,9 @@ export function getFieldsFromErrors(errors) {
             return;
         }
         else if(Array.isArray(errors)){
-            return errors.map(key => {
-                fields.push(`${path}[${key}]`);
-                loop(`${path}[${key}]`, errors[key]);
+            return errors.map((key, index) => {
+                fields.push(`${path}[${index}]`);
+                loop(`${path}[${index}]`, errors[key]);
             }, {});
         }
         else{
