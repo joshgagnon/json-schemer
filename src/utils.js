@@ -2,6 +2,7 @@ const oneOfField = fieldProps => getIn(fieldProps, ['x-hints', "form", "selector
 
 export const componentType = fieldProps => getIn(fieldProps, ['x-hints', "form", "inputComponent"]);
 export const addItem = fieldProps => getIn(fieldProps, ['x-hints', "form", "addItem"]) || 'Add Item';
+export const suggestions = fieldProps => getIn(fieldProps, ['x-hints', "form", "suggestions"]) || false;
 export const controlStyle = fieldProps => getIn(fieldProps, ['x-hints', "form", "controls"]);
 export const getSourceLocation = fieldProps => getIn(fieldProps, ['x-hints', "form", "sourceLocation"]);
 export const defaultSource = fieldProps => getIn(fieldProps, ['x-hints', "form", "defaultSource"]);
