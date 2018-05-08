@@ -8,6 +8,8 @@ function getRef(obj, values){
 }
 
 const emptyArray = [];
+const emptyObject = {};
+
 
 export default function getValidate(schema) {
     return (values) => {
@@ -15,7 +17,7 @@ export default function getValidate(schema) {
         function loop(props, values, required){
             return Object.keys(props).reduce((acc, key) => {
                 if(props[key].type === 'object'){
-                    const matching = oneOfMatchingSchema(props[key], values[key]);
+                    const matching = oneOfMatchingSchema(props[key], (values || emptyObject)[key]);
                     let required = props[key].required || [];
                     let properties = props[key].properties
                     if(matching && matching.required){
