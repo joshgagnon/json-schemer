@@ -27,7 +27,7 @@ export default function getValidate(schema) {
                         properties = {...properties, ...matching.properties}
                     }
 
-                    acc[key] = loop(properties, values[key], required)
+                    acc[key] = loop(properties, (values || emptyObject)[key], required)
                 }
                 if(props[key].type === 'array'){
                     acc[key] = (values[key] || emptyArray).map(v => {
