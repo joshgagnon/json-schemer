@@ -23,15 +23,19 @@ export function getIn(obj, fields){
     }, obj);
 }
 
+const emptyObject = {};
+
 export function oneOfMatchingSchema(fieldProps, values){
     const field = oneOfField(fieldProps);
     if(!field || !fieldProps.oneOf){
         return false;
     }
     return fieldProps.oneOf.filter(f => {
-        return f.properties[field].enum[0] === values[field];
+        return f.properties[field].enum[0] === (values || emptyObject)[field];
     })[0];
 }
+
+
 
 export function getSubSchema(schema, stepIndex) {
     const fields = schema.wizard.steps[stepIndex].items;
