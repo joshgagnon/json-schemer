@@ -51,7 +51,7 @@ export default function getValidate(schema) {
                         }
                     });
                     if(props[key].minItems && (!values[key] || values[key].length < props[key].minItems)){
-                        globalErrors.push([`At least ${props[key].minItems} '${props[key].title || props[key].validationTitle}' required.`]);
+                        acc[key]._error = [`At least ${props[key].minItems} '${props[key].title || props[key].validationTitle}' required.`];
                     }
                 }
                 if(required.indexOf(key) >= 0 && (!values || values[key] === undefined || values[key] === null || values[key] === '')){
