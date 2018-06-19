@@ -222,9 +222,9 @@ describe('Get Default Values', function() {
 
         const expected = {
             "objectArray": [
-                { "name": { "firstName": "x", "lastName": "y"}, _keyIndex: 0 },
                 { "name": { "firstName": "x", "lastName": "y"}, _keyIndex: 1 },
-                { "name": { "firstName": "x", "lastName": "y"}, _keyIndex: 2 }
+                { "name": { "firstName": "x", "lastName": "y"}, _keyIndex: 2 },
+                { "name": { "firstName": "x", "lastName": "y"}, _keyIndex: 3 }
             ]
         };
 
