@@ -27,6 +27,16 @@ function inferDefault(prop, context) {
 
 // Appears to not be populating default on list items
 export default function getDefaultValues(schema, context={}) {
+
+    function prepValues(args) {
+        if(Array.isArray(args)){
+            return args.map((arg) => {
+                return {...arg, _keyIndex: getKey()};
+            })
+        }
+        return ags;
+    }
+
     function loop(props, fields, index=0) {
         Object.keys(props).map((key, propIndex) => {
             // Check we need to infer some king of default, then set it
@@ -37,7 +47,7 @@ export default function getDefaultValues(schema, context={}) {
                 if (props[key].default) {
                     if (Array.isArray(defaultValue) && props[key].default.length === 1) {
                         defaultValue = defaultValue.map((value, i) => {
-                            return { _keyIndex: i, ...props[key].default[0], ...value }
+                            return { _keyIndex:  getKey(), ...props[key].default[0], ...value }
                         })
                     }
                 }
@@ -52,7 +62,8 @@ export default function getDefaultValues(schema, context={}) {
                 const nextFields = fields[key] || {};
                 fields[key] = loop(props[key].properties, nextFields, index);
                 if (props[key].default) {
-                    fields[key] = deepmerge(props[key].default, fields[key]);
+
+                    fields[key] = deepmerge(prepValues(props[key].default), fields[key]);
                 }
 
             }
@@ -75,7 +86,7 @@ export default function getDefaultValues(schema, context={}) {
                 fields[key] = obj;
             }
             else if(props[key].default){
-                fields[key] = fields[key] || props[key].default;
+                fields[key] = fields[key] || prepValues(props[key].default);
             }
             if (props[key].oneOf) {
                 let obj = fields[key] || {};
