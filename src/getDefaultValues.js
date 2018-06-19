@@ -34,7 +34,7 @@ export default function getDefaultValues(schema, context={}) {
                 return {...arg, _keyIndex: getKey()};
             })
         }
-        return ags;
+        return args;
     }
 
     function loop(props, fields, index=0) {
